@@ -1,0 +1,12 @@
+dim: [1]
+K: [2]
+length_scale: [0.2]
+mode: ['uniform']
+hlayers: [2]
+width: [200]
+activation: ['relu']
+lr: [0.001]
+epochs: [10000]
+print_every: [10]
+train_num: [5, 10, 20, 50, 100, 200, 500, 1000]
+repeat: 50

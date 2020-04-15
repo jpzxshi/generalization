@@ -1,0 +1,11 @@
+dim: 2
+K: 2
+delta0: 0.1
+hlayers: 2
+width: 30
+activation: relu
+lr: 0.001
+epochs: 2000
+print_every: 10
+train_num: 400
+test_num: 1000000

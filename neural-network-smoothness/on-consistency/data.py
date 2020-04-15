@@ -91,7 +91,7 @@ class ConsData(TorchData):
             f = lambda x: net(torch.DoubleTensor(x)).detach().numpy()
         else:
             f = lambda x: net(torch.cuda.DoubleTensor(x)).cpu().detach().numpy()
-        Nx = 10000 if data.dim == 1 else 2000
+        Nx = 10000 if data.dim == 1 else 3000
         imc = inverse_modulus_continuity(f, data.dim, max(np.exp(-Lmax) - 0.5, 0), Nx, True)
         output.append([Lmax, imc])
         print('{:<9}max_loss: {:<27}deltaf: {:<25}'.format('', Lmax, imc))

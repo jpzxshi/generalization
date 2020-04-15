@@ -14,16 +14,6 @@ import torch
 #
 # numpy
 #
-def cross_entropy(p, q):
-    return -np.sum(p * np.log(q), axis=1)
-
-
-def softmax(X):
-    """Compute softmax values for each sets of scores in x."""
-    e_x = np.exp(X - np.max(X, axis=1)[:, None])
-    return e_x / np.sum(e_x, axis=1)[:, None]
-
-
 def inverse_modulus_continuity(f, dim, eps, Nx=1000, save_iters=False):
     """Compute the inverse of the modulus of continuity.
     The domain of 'f' is [0, 1]^{dim}.
@@ -76,15 +66,22 @@ def cdist(x, y, metric='euclidean'):
 
 #
 # torch
-#    
-def cross_entropy_loss(p, q):
+#
+def Softmax(X, dim):
+    e_x = torch.exp(X - torch.max(X, dim=dim, keepdim=True)[0])
+    return e_x / torch.sum(e_x, dim=dim, keepdim=True)
+    
+def Cross_entropy(p, q):
     if p is not None and q is not None:
         return torch.mean(-torch.sum(p * torch.log(q), dim=1))
-    else:
-        return torch.DoubleTensor([-1])
-         
+    return torch.FloatTensor([-1])
 
-def grad(y, x):
+def Test_accuracy(data, net):
+    y_pred = net(data.X_test)
+    diff = torch.argmax(y_pred, dim=1) == torch.argmax(data.y_test, dim=1)
+    return torch.mean(diff.type(torch.FloatTensor)).item()
+         
+def Grad(y, x):
     '''
     y: [N, Ny] or [Ny]
     x: [N, Nx] or [Nx]
@@ -111,12 +108,6 @@ def grad(y, x):
 
    
 def main():
-    #a = torch.tensor([[1.0, 2], [4, 5]], requires_grad=True)
-    #A = torch.tensor([[1.0, -7, 2], [3, 4, 5]])
-    #b = torch.nn.functional.relu(a @ A)
-    #grads = grad(b, a)
-    #print(grads)
-    
     f = lambda x: x @ np.array([[1], [1]])
     imc = inverse_modulus_continuity(f, dim=2, eps=0.5, Nx=200, save_iters=False)
     print(imc)

@@ -25,14 +25,6 @@ class CCData(TorchData):
         self.__MC = None
         self.__CD = None
         self.__CC = None
-        
-    @property
-    def dim(self):
-        return self.X_train_np.shape[1]
-    
-    @property
-    def K(self):
-        return self.y_train_np.shape[1]
     
     @property
     def dists(self):
@@ -92,7 +84,7 @@ class CCData(TorchData):
     @property
     def CC(self):
         if self.__CC is None:
-            print('Computing CC...')
+            print('Computing CC...', flush=True)
             @timing
             def Computing():
                 return (1 - self.TC) / self.CD

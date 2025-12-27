@@ -52,7 +52,7 @@ def restore(loss):
     loss_train, loss_test = loss[best_loss_index, 1], loss[best_loss_index, 2]
     print('Best model at epoch {}:'.format(epoch))
     print('Train loss:', loss_train, 'Test loss:', loss_test)
-    net = torch.load('model/model{}.pkl'.format(epoch))
+    net = torch.load('model/model{}.pkl'.format(epoch), weights_only=False)
     torch.save(net, 'model_best.pkl')
     return net
 
@@ -77,7 +77,7 @@ class TorchData:
     def all_to_cpu(self):
         for d in ['X_train', 'y_train', 'X_test', 'y_test']:
             if isinstance(getattr(self, d), np.ndarray):
-                setattr(self, d, torch.DoubleTensor(getattr(self, d)))
+                setattr(self, d, torch.tensor(getattr(self, d), device=torch.device('cpu')))
             elif isinstance(getattr(self, d), torch.Tensor):
                 setattr(self, d, getattr(self, d).cpu())
             else:
@@ -86,7 +86,7 @@ class TorchData:
     def all_to_gpu(self):
         for d in ['X_train', 'y_train', 'X_test', 'y_test']:
             if isinstance(getattr(self, d), np.ndarray):
-                setattr(self, d, torch.cuda.DoubleTensor(getattr(self, d)))
+                setattr(self, d, torch.tensor(getattr(self, d), device=torch.device('cuda')))
             elif isinstance(getattr(self, d), torch.Tensor):
                 setattr(self, d, getattr(self, d).cuda())
             else:

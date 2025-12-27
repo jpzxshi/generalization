@@ -88,9 +88,9 @@ class ConsData(TorchData):
     def compute_imc(data, net, output):
         Lmax = np.max(cross_entropy(data.y_train_np, net(data.X_train).cpu().detach().numpy()))
         if net.device == 'cpu':
-            f = lambda x: net(torch.DoubleTensor(x)).detach().numpy()
+            f = lambda x: net(torch.tensor(x, dtype=torch.float64, device=torch.device('cpu'))).detach().numpy()
         else:
-            f = lambda x: net(torch.cuda.DoubleTensor(x)).cpu().detach().numpy()
+            f = lambda x: net(torch.tensor(x, dtype=torch.float64, device=torch.device('cuda'))).cpu().detach().numpy()
         Nx = 10000 if data.dim == 1 else 3000
         imc = inverse_modulus_continuity(f, data.dim, max(np.exp(-Lmax) - 0.5, 0), Nx, True)
         output.append([Lmax, imc])
@@ -105,7 +105,7 @@ class ConsData(TorchData):
         max_loss, imc = imc_his[best_imc_index]
         print('Model with max deltaf at epoch {}:'.format(epoch))
         print('max_loss:', max_loss, 'deltaf:', imc)
-        net = torch.load('model/model{}.pkl'.format(epoch))
+        net = torch.load('model/model{}.pkl'.format(epoch), weights_only=False)
         torch.save(net, 'model_best.pkl')
         return net
         

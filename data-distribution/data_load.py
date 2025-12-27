@@ -24,14 +24,14 @@ def load_MNIST(path, pixel_normalization=False, one_hot=False):
     for t in ['y_train', 'y_test']:
         with gzip.open(PATH[t], 'rb') as f:
             magic, num = struct.unpack('>II', f.read(8))
-            data[t] = np.frombuffer(f.read(), dtype=np.uint8).copy().astype(np.integer)
+            data[t] = np.frombuffer(f.read(), dtype=np.uint8).copy().astype(np.int32)
             
     if pixel_normalization:
         data['X_train'] = data['X_train'] / 255
         data['X_test'] = data['X_test'] / 255
     if one_hot:
-        data['y_train'] = (np.arange(10) == data['y_train'][:, None]).astype(np.integer)
-        data['y_test'] = (np.arange(10) == data['y_test'][:, None]).astype(np.integer)
+        data['y_train'] = (np.arange(10) == data['y_train'][:, None]).astype(np.int32)
+        data['y_test'] = (np.arange(10) == data['y_test'][:, None]).astype(np.int32)
     return data
 
 

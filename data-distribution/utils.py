@@ -78,7 +78,7 @@ class TorchRunner:
             loss_test = self.loss_history[best_loss_index, 2]
             print('Best model at iteration {}:'.format(iteration))
             print('Train loss:', loss_train, 'Test loss:', loss_test)
-            self.best_model = torch.load('model/model{}.pkl'.format(iteration))
+            self.best_model = torch.load('model/model{}.pkl'.format(iteration), weights_only=False)
             torch.save(self.best_model, 'model_best.pkl')
         else:
             raise RuntimeError('restore before running or without saved models')
@@ -158,14 +158,14 @@ class TorchData:
     def __to_cpu(self):
         for d in ['X_train', 'y_train', 'X_test', 'y_test']:
             if isinstance(getattr(self, d), np.ndarray):
-                setattr(self, d, torch.FloatTensor(getattr(self, d)))
+                setattr(self, d, torch.tensor(getattr(self, d), device=torch.device('cpu')))
             elif isinstance(getattr(self, d), torch.Tensor):
                 setattr(self, d, getattr(self, d).cpu())
     
     def __to_gpu(self):
         for d in ['X_train', 'y_train', 'X_test', 'y_test']:
             if isinstance(getattr(self, d), np.ndarray):
-                setattr(self, d, torch.cuda.FloatTensor(getattr(self, d)))
+                setattr(self, d, torch.tensor(getattr(self, d), device=torch.device('cuda')))
             elif isinstance(getattr(self, d), torch.Tensor):
                 setattr(self, d, getattr(self, d).cuda())
 
